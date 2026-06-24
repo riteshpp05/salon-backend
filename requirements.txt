@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+jinja2
+sqlalchemy
+pydantic
+python-multipart
+python-dotenv
+httpx
+selenium
+webdriver-manager
+itsdangerous
+psycopg2-binary
+a2wsgi
