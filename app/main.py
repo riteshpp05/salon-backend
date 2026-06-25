@@ -115,19 +115,26 @@ if _secret_key == "fallback-insecure-key-set-SECRET_KEY-in-env":
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080", "http://localhost:5500", "https://thehairengineer.in"],
+    allow_origins=[
+        "http://localhost:8080",
+        "http://localhost:5500",
+        "http://localhost:3000",
+        "https://thehairengineer.in",
+        "https://www.thehairengineer.in",  # www redirect coverage
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 app.add_middleware(
     SessionMiddleware,
     secret_key=_secret_key,
     session_cookie="salon_session",
-    max_age=None,    # Session-only cookie, clears when browser closes
-    https_only=False,
-    same_site="lax",
+    max_age=3600,     # 1 hour session
+    https_only=False,  # LOCAL TEST: False (True for Prod)
+    same_site="lax", # LOCAL TEST: 'lax' ('none' for Prod)
 )
 
 # Routers
