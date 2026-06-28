@@ -151,7 +151,7 @@ class BookingCreate(BaseModel):
         if len(digits_only) < 10:
             raise ValueError(
                 f"Phone number too short ({len(digits_only)} digits). "
-                "Please include your country code (e.g. +918805031513)."
+                "Please include your country code (e.g. +918805031531)."
             )
         if len(digits_only) > 15:
             raise ValueError(f"Phone number too long ({len(digits_only)} digits).")

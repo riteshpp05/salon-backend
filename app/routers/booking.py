@@ -63,7 +63,7 @@ async def create_booking(
         raise HTTPException(status_code=400, detail=str(error))
 
     # Send WhatsApp to admin via Selenium (background — does not block response)
-    admin_number = os.getenv("ADMIN_WHATSAPP_NUMBER", "+918805031513")
+    admin_number = os.getenv("ADMIN_WHATSAPP_NUMBER", "+918805031531")
     message_text = format_booking_message(new_booking)
     logger.info("Queuing Selenium WhatsApp notification...")
     background_tasks.add_task(trigger_selenium_whatsapp, admin_number, message_text)
