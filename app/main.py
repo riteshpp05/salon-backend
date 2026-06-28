@@ -122,8 +122,8 @@ app.add_middleware(
         "https://www.thehairengineer.in",  # www redirect coverage
     ],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
     expose_headers=["*"],
 )
 
