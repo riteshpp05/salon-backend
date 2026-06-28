@@ -87,7 +87,6 @@ class StylistResponse(BaseModel):
     role: str
     phone: str
     email: str
-    profile_image: str
     experience_years: int
     specialization: str
     bio: str
@@ -252,8 +251,6 @@ class GalleryItemResponse(BaseModel):
     title: str
     description: str
     service_type: str
-    before_image: str
-    after_image: str
     display_order: int
     is_published: bool
     class Config:

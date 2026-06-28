@@ -196,15 +196,6 @@ def delete_stylist(db: Session, stylist_id: int) -> Optional[models.Stylist]:
     return stylist
 
 
-def update_stylist_image(db: Session, stylist_id: int, filename: str) -> Optional[models.Stylist]:
-    stylist = get_stylist(db, stylist_id)
-    if stylist:
-        stylist.profile_image = filename
-        db.commit()
-        db.refresh(stylist)
-    return stylist
-
-
 # ── Stylist Availability ──────────────────────────────────────────────────────
 
 def get_stylist_availability(db: Session, stylist_id: int):
@@ -485,18 +476,6 @@ def update_gallery_item(db: Session, item_id: int, data: schemas.GalleryItemUpda
     return item
 
 
-def update_gallery_image(db: Session, item_id: int, image_type: str, filename: str) -> Optional[models.GalleryItem]:
-    item = get_gallery_item(db, item_id)
-    if item:
-        if image_type == "before":
-            item.before_image = filename
-        elif image_type == "after":
-            item.after_image = filename
-        db.commit()
-        db.refresh(item)
-    return item
-
-
 def toggle_gallery_publish(db: Session, item_id: int) -> Optional[models.GalleryItem]:
     item = get_gallery_item(db, item_id)
     if item:
@@ -518,14 +497,6 @@ def reorder_gallery(db: Session, order_map: dict[int, int]):
 def delete_gallery_item(db: Session, item_id: int) -> Optional[models.GalleryItem]:
     item = get_gallery_item(db, item_id)
     if item:
-        # Delete associated image files
-        static_root = os.path.join("app", "static", "gallery")
-        for sub, filename in [("before", item.before_image), ("after", item.after_image)]:
-            if filename:
-                for folder in [sub, "thumbs"]:
-                    path = os.path.join(static_root, folder, filename)
-                    if os.path.exists(path):
-                        os.remove(path)
         db.delete(item)
         db.commit()
     return item

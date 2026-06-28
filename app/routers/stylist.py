@@ -1,12 +1,9 @@
 """
 routers/stylist.py — Staff Management APIs
 """
-import os
-import uuid
-
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
@@ -15,10 +12,7 @@ from app.database import SessionLocal
 
 router = APIRouter()
 
-STYLIST_IMAGE_DIR = os.path.join("app", "static", "stylists")
-os.makedirs(STYLIST_IMAGE_DIR, exist_ok=True)
 
-ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
 
 
 def get_db():
@@ -43,11 +37,6 @@ def list_stylists(db: Session = Depends(get_db)):
             "experience_years": s.experience_years,
             "specialization": s.specialization,
             "bio": s.bio,
-            "profile_image": (
-                f"/static/stylists/{s.profile_image}"
-                if s.profile_image and not s.profile_image.startswith("http")
-                else s.profile_image or ""
-            ),
         }
         for s in stylists
     ]
@@ -83,11 +72,6 @@ def list_all_stylists(
             "specialization": s.specialization,
             "bio": s.bio,
             "is_active": s.is_active,
-            "profile_image": (
-                f"/static/stylists/{s.profile_image}"
-                if s.profile_image and not s.profile_image.startswith("http")
-                else s.profile_image or ""
-            ),
             **stats,
         })
     return result
@@ -150,47 +134,6 @@ def set_availability(
     if not stylist:
         raise HTTPException(status_code=404, detail="Stylist not found")
     return crud.set_stylist_availability(db, stylist_id, entries)
-
-
-@router.post("/api/stylists/{stylist_id}/upload-image")
-async def upload_stylist_image(
-    stylist_id: int,
-    file: UploadFile = File(...),
-    db: Session = Depends(get_db),
-    _: None = Depends(require_admin_api),
-):
-    stylist = crud.get_stylist(db, stylist_id)
-    if not stylist:
-        raise HTTPException(status_code=404, detail="Stylist not found")
-
-    ext = os.path.splitext(file.filename or "")[1].lower()
-    if ext not in ALLOWED_EXTENSIONS:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Invalid file type '{ext}'. Allowed: JPG, PNG, WEBP."
-        )
-
-    # Compress with Pillow and save as WebP
-    try:
-        from PIL import Image
-        import io
-        content = await file.read()
-        img = Image.open(io.BytesIO(content)).convert("RGB")
-        img.thumbnail((600, 600))
-        filename = f"stylist_{stylist_id}_{uuid.uuid4().hex[:8]}.webp"
-        save_path = os.path.join(STYLIST_IMAGE_DIR, filename)
-        img.save(save_path, "WEBP", quality=85)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Image processing failed: {e}")
-
-    # Delete old image if it exists
-    if stylist.profile_image:
-        old_path = os.path.join(STYLIST_IMAGE_DIR, stylist.profile_image)
-        if os.path.exists(old_path):
-            os.remove(old_path)
-
-    crud.update_stylist_image(db, stylist_id, filename)
-    return {"message": "Image uploaded", "filename": filename, "url": f"/static/stylists/{filename}"}
 
 
 @router.patch("/api/bookings/{booking_id}/assign-stylist", response_model=schemas.BookingResponse)
