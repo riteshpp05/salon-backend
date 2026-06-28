@@ -115,16 +115,16 @@ if _secret_key == "fallback-insecure-key-set-SECRET_KEY-in-env":
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "https://thehairengineer.in",
+        "https://www.thehairengineer.in",
         "http://localhost:8080",
         "http://localhost:5500",
         "http://localhost:3000",
-        "https://thehairengineer.in",
-        "https://www.thehairengineer.in",  # www redirect coverage
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
-    expose_headers=["*"],
+    expose_headers=["Content-Type", "Authorization"],
 )
 
 app.add_middleware(
