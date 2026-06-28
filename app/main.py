@@ -100,7 +100,6 @@ ensure_unique_booking_constraint()
 db = SessionLocal()
 try:
     crud.seed_default_data(db)
-    crud.sync_slot_booking_state(db)
 finally:
     db.close()
 

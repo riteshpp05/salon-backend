@@ -47,24 +47,7 @@ def seed_default_data(db: Session):
     db.commit()
 
 
-def sync_slot_booking_state(db: Session, target_date: str = None):
-    if target_date is None:
-        target_date = date.today().isoformat()
 
-    slots = db.query(models.TimeSlot).all()
-    for slot in slots:
-        active_booking = (
-            db.query(models.Booking)
-            .filter(models.Booking.time_slot == (slot.slot_time or slot.slot))
-            .filter(models.Booking.appointment_date == target_date)
-            .filter(models.Booking.status.in_(ACTIVE_STATUSES))
-            .order_by(models.Booking.id.desc())
-            .first()
-        )
-        slot.is_available = "No" if active_booking else "Yes"
-        slot.booking_id = active_booking.id if active_booking else None
-
-    db.commit()
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -387,12 +370,13 @@ def get_slot_cards(db: Session, target_date: str = None):
             .filter(models.Booking.status.in_(ACTIVE_STATUSES))
             .first()
         )
+        is_disabled_by_admin = slot.is_available == "No"
         cards.append({
             "id": slot.id,
             "slot_time": slot_time_value,
-            "is_available": "No" if booking else "Yes",
+            "is_available": "No" if booking or is_disabled_by_admin else "Yes",
             "booking_id": booking.id if booking else None,
-            "state": "booked" if booking else "available",
+            "state": "booked" if booking or is_disabled_by_admin else "available",
             "customer_name": booking.customer_name if booking else "",
             "service": booking.service if booking else "",
             "status": booking.status if booking else "",

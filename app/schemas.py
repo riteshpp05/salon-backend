@@ -151,7 +151,7 @@ class BookingCreate(BaseModel):
         if len(digits_only) < 10:
             raise ValueError(
                 f"Phone number too short ({len(digits_only)} digits). "
-                "Please include your country code (e.g. +917028111146)."
+                "Please include your country code (e.g. +918805031513)."
             )
         if len(digits_only) > 15:
             raise ValueError(f"Phone number too long ({len(digits_only)} digits).")
@@ -219,6 +219,12 @@ class BookingResponse(BookingCreate):
     service_duration: str
     status: str
     stylist_id: Optional[int] = None
+
+    @field_validator("appointment_date")
+    @classmethod
+    def allow_past_dates(cls, v: str) -> str:
+        return v
+
     class Config:
         from_attributes = True
 
