@@ -19,9 +19,10 @@ Usage:
 """
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
+import os
 
 # The valid admin token — must match what admin.py returns on login
-VALID_ADMIN_TOKEN = "super_secret_admin_token"
+VALID_ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "super_secret_admin_token")
 
 # Optional scheme — won't raise 401 automatically if token missing
 oauth2_scheme_optional = OAuth2PasswordBearer(tokenUrl="/api/admin/login", auto_error=False)

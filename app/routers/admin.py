@@ -15,6 +15,7 @@ router = APIRouter()
 # ── Credentials (loaded from environment, never hardcoded) ─────────────────
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
+VALID_ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "super_secret_admin_token")
 
 
 def get_db():
@@ -51,7 +52,7 @@ def admin_login_submit(credentials: LoginRequest, request: Request):
     # Also return Bearer token (for localStorage-based auth — belt and suspenders)
     return {
         "status": "success",
-        "access_token": "super_secret_admin_token",
+        "access_token": VALID_ADMIN_TOKEN,
         "token_type": "bearer"
     }
 
