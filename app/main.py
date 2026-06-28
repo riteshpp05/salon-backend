@@ -132,8 +132,8 @@ app.add_middleware(
     secret_key=_secret_key,
     session_cookie="salon_session",
     max_age=3600,     # 1 hour session
-    https_only=False,  # LOCAL TEST: False (True for Prod)
-    same_site="lax", # LOCAL TEST: 'lax' ('none' for Prod)
+    https_only=True,  # LOCAL TEST: False (True for Prod)
+    same_site="none", # LOCAL TEST: 'lax' ('none' for Prod)
 )
 
 # Routers
